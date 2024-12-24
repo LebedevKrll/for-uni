@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавление промежуточных точек маршрута</title>
+    <script>
+        function addIntermediatePoint() {
+            const container = document.getElementById('intermediate-points');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'Промежуточная точка';
+            input.name = 'intermediatePoints[]'; // Имя для отправки массива промежуточных точек
+            container.appendChild(input);
+        }
+    </script>
+</head>
+<body>
+    <h1>Добавление маршрута</h1>
+    <form id="route-form">
+        <label for="start">Начальная точка:</label>
+        <input type="text" id="start" name="start" required placeholder="Начальная точка"><br><br>
+
+        <div id="intermediate-points">
+            <label>Промежуточные точки:</label><br>
+            <input type="text" name="intermediatePoints[]" placeholder="Промежуточная точка"><br>
+        </div>
+
+        <button type="button" onclick="addIntermediatePoint()">Добавить промежуточную точку</button><br><br>
+
+        <label for="end">Конечная точка:</label>
+        <input type="text" id="end" name="end" required placeholder="Конечная точка"><br><br>
+
+        <input type="submit" value="Отправить маршрут">
+    </form>
+
+    <div id="graphs"></div>
+
+    <script>
+        document.getElementById('route-form').onsubmit = function(event) {
+            event.preventDefault(); // Отменяем стандартное поведение формы
+
+            const formData = new FormData(event.target);
+            const startCity = formData.get('start');
+            const endCity = formData.get('end');
+            const intermediateCities = formData.getAll('intermediatePoints[]');
+
+            // Отправляем данные на сервер через AJAX
+            fetch('/submit-route', {
+                method: 'POST',
+                body: JSON.stringify({ start: startCity, end: endCity, intermediates: intermediateCities }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Здесь вы можете обработать ответ и отобразить графики
+                document.getElementById('graphs').innerHTML = ''; // Очищаем предыдущие графики
+                data.graphs.forEach(graph => {
+                    const graphDiv = document.createElement('div');
+                    graphDiv.innerHTML = graph; // Предполагаем, что сервер возвращает HTML графиков
+                    document.getElementById('graphs').appendChild(graphDiv);
+                });
+            });
+        };
+    </script>
+</body>
+</html>
