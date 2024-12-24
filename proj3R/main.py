@@ -28,7 +28,7 @@ def get_loc_key_by_city(city, key):
 def forecast(city, key):
     loc_key = get_loc_key_by_city(city, key)
     if not loc_key:
-        return []  # Возвращаем пустой список, если ключ не найден
+        return []
 
     url = f'http://dataservice.accuweather.com/forecasts/v1/daily/5day/{loc_key}'
     params = {
@@ -45,10 +45,10 @@ def forecast(city, key):
         forecast_data = []
         for day in data['DailyForecasts']:
             date = day['Date']
-            temperature_min = day['Temperature']['Minimum']['Value']  # Исправлено на Minimum
-            temperature_max = day['Temperature']['Maximum']['Value']  # Исправлено на Maximum
-            wind_speed = day['Day']['Wind']['Speed']['Value']  # Исправлено на Day/Wind/Speed/Value
-            humidity_average = day['Day']['RelativeHumidity']['Average']  # Исправлено на Day/Humidity
+            temperature_min = day['Temperature']['Minimum']['Value']
+            temperature_max = day['Temperature']['Maximum']['Value']
+            wind_speed = day['Day']['Wind']['Speed']['Value']
+            humidity_average = day['Day']['RelativeHumidity']['Average']
             forecast_data.append({
                 "Date": date,
                 "Temperature": {"Min": temperature_min, "Max": temperature_max},
@@ -64,7 +64,6 @@ def forecast(city, key):
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-# Initialize an empty list to store countries
 countries = []
 
 app.layout = html.Div([
@@ -98,10 +97,8 @@ app.layout = html.Div([
         clearable=False,
     ),
     
-    # Button to open modal
     dbc.Button("Добавить промежуточную точку", id="open-modal", n_clicks=0),
     
-    # Modal for adding country
     dbc.Modal(
         [
             dbc.ModalHeader("Добавить промежуточную точку"),
@@ -117,13 +114,10 @@ app.layout = html.Div([
         is_open=False,
     ),
     
-    # Display list of countries
     html.Div(id='country-list'),
     
-    # Graphs for displaying weather forecasts
     html.Div(id='graphs-container'),
     
-    # Original graphs for start and end cities
     dcc.Graph(id='start_graph'),
     dcc.Graph(id='end_graph'),
 ])
@@ -150,10 +144,8 @@ def add_country(n_clicks, country_name):
     if n_clicks > 0 and country_name:
         countries.append(country_name)
     
-    # Display the list of added countries
     country_list_display = f"Добавленные страны: {', '.join(countries)}"
     
-    # Generate graphs for each added country
     graphs = []
     for country in countries:
         graphs.append(dcc.Graph(id=f'graph-{country}', figure=create_figure_for_country(country)))
@@ -161,14 +153,14 @@ def add_country(n_clicks, country_name):
     return country_list_display, graphs
 
 def create_figure_for_country(country):
-    data = forecast(country, "3lBKXfV0pQAnQjBoshtMLSoDQGZkeyqr")  # Get forecast data
+    data = forecast(country, "3lBKXfV0pQAnQjBoshtMLSoDQGZkeyqr")
     
     if not data:
-        return go.Figure()  # Return an empty figure if no data
+        return go.Figure() 
 
     dates = [day['Date'] for day in data]
     
-    values = [day['Temperature']['Min'] for day in data]  # Example: minimum temperature
+    values = [day['Temperature']['Min'] for day in data] 
     
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=dates, y=values, mode='lines+markers', name=f'Минимальная температура (°C)'))
