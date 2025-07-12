@@ -61,12 +61,14 @@ export const AuthProvider = ({ children }) => {
         email,
         password,
       });
+      console.log('Login response:', response.data);
 
       const { token: newToken, user: userData } = response.data;
 
       setToken(newToken);
       setUser(userData);
       localStorage.setItem('token', newToken);
+      console.log('Token saved to localStorage:', localStorage.getItem('token'));
       setAxiosHeaders(userData, newToken);
 
       return { success: true };

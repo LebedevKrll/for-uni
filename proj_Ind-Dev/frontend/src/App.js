@@ -10,6 +10,7 @@ import MyBooks from './pages/MyBooks.js';
 import Exchanges from './pages/Exchanges';
 import AddBook from './pages/AddBook';
 import BookDetails from './pages/BookDetails';
+import BookExchange from './pages/BookExchange';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
@@ -26,6 +27,7 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/books" element={<Books />} />
               <Route path="/books/:id" element={<BookDetails />} />
+              <Route path="/books/:id/exchange" element={<BookExchange />} />
               <Route path="/my-books" element={
                 <ProtectedRoute>
                   <MyBooks />

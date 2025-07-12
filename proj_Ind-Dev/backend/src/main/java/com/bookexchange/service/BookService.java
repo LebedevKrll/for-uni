@@ -21,7 +21,12 @@ public class BookService {
     }
     
     public Page<Book> getAvailableBooksWithFilters(String title, String author, String genre, Pageable pageable) {
-        return bookRepository.findByIsAvailableTrue();
+        String titleFilter = (title == null) ? "" : title;
+        String authorFilter = (author == null) ? "" : author;
+        String genreFilter = (genre == null) ? "" : genre;
+
+        return bookRepository.findByTitleContainingIgnoreCaseAndAuthorContainingIgnoreCaseAndGenreContainingIgnoreCase(
+                titleFilter, authorFilter, genreFilter, pageable);
     }
     
     public Optional<Book> getBookById(Long id) {
@@ -56,9 +61,5 @@ public class BookService {
     
     public List<String> getAllGenres() {
         return bookRepository.findAllAvailableGenres();
-    }
-    
-    public List<Book> getRecommendationsByGenre(String genre) {
-        return bookRepository.findByGenreAndIsAvailableTrueOrderByCreatedAtDesc(genre);
     }
 }

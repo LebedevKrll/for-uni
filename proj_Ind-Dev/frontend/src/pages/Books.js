@@ -124,7 +124,6 @@ const Books = () => {
                 {book.publicationYear && (
                   <p className="year">Год: {book.publicationYear}</p>
                 )}
-                <p className="owner">Владелец: {book.ownerName}</p>
                 {book.description && (
                   <p className="description">
                     {book.description.length > 100 

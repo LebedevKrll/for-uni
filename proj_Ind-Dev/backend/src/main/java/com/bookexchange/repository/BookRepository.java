@@ -13,13 +13,14 @@ import java.util.List;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
     
-    List<Book> findByOwnerIdAndIsAvailableTrue(Long ownerId);
-    
     List<Book> findByIsAvailableTrue();
-                                           
-    
+
+    List<Book> findByOwnerIdAndIsAvailableTrue(Long ownerId);
+
+    Page<Book> findByTitleContainingIgnoreCaseAndAuthorContainingIgnoreCaseAndGenreContainingIgnoreCase(
+        String title, String author, String genre, Pageable pageable);
+
     @Query("SELECT DISTINCT b.genre FROM Book b WHERE b.isAvailable = true ORDER BY b.genre")
     List<String> findAllAvailableGenres();
-    
-    List<Book> findByGenreAndIsAvailableTrueOrderByCreatedAtDesc(String genre);
+
 }

@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import com.bookexchange.util.JWTUtil;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/books")
 @Tag(name = "Books", description = "Book management APIs")
 public class BookController {
@@ -97,12 +98,5 @@ public class BookController {
         List<String> genres = bookService.getAllGenres();
         return ResponseEntity.ok(genres);
     }
-    
-    @GetMapping("/recommendations")
-    @Operation(summary = "Get book recommendations", 
-               description = "Get book recommendations based on genre")
-    public ResponseEntity<List<Book>> getRecommendations(@RequestParam String genre) {
-        List<Book> recommendations = bookService.getRecommendationsByGenre(genre);
-        return ResponseEntity.ok(recommendations);
-    }
+
 }

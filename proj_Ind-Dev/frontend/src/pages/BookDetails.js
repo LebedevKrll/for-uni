@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 function BookDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -32,18 +33,31 @@ function BookDetails() {
   if (error) return <p style={{ color: 'red' }}>Ошибка: {error}</p>;
   if (!book) return <p>Книга не найдена.</p>;
 
+  const handleExchangeClick = () => {
+    navigate(`/books/${id}/exchange`);
+  };
+
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1>{book.title}</h1>
       <h3>Автор: {book.author}</h3>
-      {book.coverUrl && (
-        <img
-          src={book.coverUrl}
-          alt={`Обложка книги ${book.title}`}
-          style={{ maxWidth: '200px', marginBottom: '20px' }}
-        />
-      )}
       <p>{book.description}</p>
+
+      <button
+        onClick={handleExchangeClick}
+        style={{
+          padding: '10px 20px',
+          fontSize: '16px',
+          cursor: 'pointer',
+          backgroundColor: '#007bff8e',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          marginTop: '20px'
+        }}
+      >
+        Предложить обмен
+      </button>
     </div>
   );
 }

@@ -4,6 +4,8 @@ import axios from 'axios';
 
 function MyBooks() {
   const { token } = useAuth();
+  const payload = parseJwt(token);
+  const userId = payload?.id || payload?.userId;
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,16 +13,22 @@ function MyBooks() {
   useEffect(() => {
     async function fetchMyBooks() {
       try {
-        const response = await axios.get('http://localhost:8080/api/user/', {
+        setLoading(true);
+        setError(null);
+        const response = await axios.get(`http://localhost:8080/api/books/user/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        //setMyBooks(response.data);
+        setBooks(response.data);
       } catch (error) {
         console.error('Ошибка при загрузке моих книг', error);
+        setError(error.message || 'Ошибка загрузки');
+      } finally {
+        setLoading(false);
       }
     }
+
 
     fetchMyBooks();
   }, []);
