@@ -3,7 +3,9 @@ import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 
 const AddBook = () => {
-  const { token } = useAuth();
+  const { user, token } = useAuth();
+  const userId = user?.id
+  const userName = user?.name
   const [formData, setFormData] = useState({
     title: '',
     author: '',
@@ -28,13 +30,18 @@ const AddBook = () => {
     setLoading(true);
 
     try {
+      const data = {
+        ...formData
+      };
       const response = await axios.post(
         'http://localhost:8080/api/books',
-        formData,
+        data,
         {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
+            'X-User-Id': userId,
+            'X-User-Name': userName
           },
         }
       );

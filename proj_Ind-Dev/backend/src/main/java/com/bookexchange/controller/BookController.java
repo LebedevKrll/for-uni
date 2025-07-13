@@ -13,13 +13,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import io.jsonwebtoken.Claims;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import com.bookexchange.util.JWTUtil;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -27,6 +25,8 @@ import com.bookexchange.util.JWTUtil;
 @Tag(name = "Books", description = "Book management APIs")
 public class BookController {
     
+    private static final Logger logger = LoggerFactory.getLogger(BookController.class);
+
     @Autowired
     private BookService bookService;
     
@@ -54,30 +54,17 @@ public class BookController {
     }
     
     @PostMapping
-    @Operation(summary = "Create new book", description = "Add a new book to the exchange platform")
-    public ResponseEntity<Book> createBook(@Valid @RequestBody Book book, @RequestHeader("Authorization") String authHeader) {
-        System.out.println("This is a log message to standard output.");
-        String token = authHeader.replace("Bearer ", "");
-        String userName = JWTUtil.extractUsername(token);
-        Long userId = JWTUtil.extractUserId(token);
+    @Operation(summary = "Create book", description = "Create Book")
+    public ResponseEntity<Book> createBook(@Valid @RequestBody Book book, @RequestHeader("Authorization") String authHeader,
+                                                                          @RequestHeader("X-User-Id") Long userId,
+                                                                          @RequestHeader("X-User-Name") String userName) {
+        logger.info("Creating book for userId: {}", book.getOwnerId());
         book.setOwnerId(userId);
         book.setOwnerName(userName);
         Book createdBook = bookService.createBook(book);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdBook);
     }
-    
-    @PutMapping("/{id}")
-    @Operation(summary = "Update book", description = "Update an existing book")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, 
-                                         @Valid @RequestBody Book bookDetails) {
-        try {
-            Book updatedBook = bookService.updateBook(id, bookDetails);
-            return ResponseEntity.ok(updatedBook);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-    
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete book", description = "Remove a book from the platform")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
@@ -85,7 +72,7 @@ public class BookController {
         return ResponseEntity.noContent().build();
     }
     
-    @GetMapping("/user/{userId}")
+    @GetMapping("/me/{userId}")
     @Operation(summary = "Get user books", description = "Get all books owned by a specific user")
     public ResponseEntity<List<Book>> getUserBooks(@PathVariable Long userId) {
         List<Book> books = bookService.getUserBooks(userId);

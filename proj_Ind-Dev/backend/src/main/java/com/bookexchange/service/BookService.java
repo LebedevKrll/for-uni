@@ -36,21 +36,7 @@ public class BookService {
     public Book createBook(Book book) {
         return bookRepository.save(book);
     }
-    
-    public Book updateBook(Long id, Book bookDetails) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
-        
-        book.setTitle(bookDetails.getTitle());
-        book.setAuthor(bookDetails.getAuthor());
-        book.setDescription(bookDetails.getDescription());
-        book.setGenre(bookDetails.getGenre());
-        book.setPublicationYear(bookDetails.getPublicationYear());
-        book.setIsAvailable(bookDetails.getIsAvailable());
-        
-        return bookRepository.save(book);
-    }
-    
+
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
     }

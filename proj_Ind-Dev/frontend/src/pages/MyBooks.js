@@ -3,9 +3,8 @@ import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 
 function MyBooks() {
-  const { token } = useAuth();
-  const payload = parseJwt(token);
-  const userId = payload?.id || payload?.userId;
+  const { user, token } = useAuth();
+  const userId = user?.id
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,11 +14,12 @@ function MyBooks() {
       try {
         setLoading(true);
         setError(null);
-        const response = await axios.get(`http://localhost:8080/api/books/user/${userId}`, {
+        const response = await axios.get(`http://localhost:8080/api/books/me/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log(response)
         setBooks(response.data);
       } catch (error) {
         console.error('Ошибка при загрузке моих книг', error);
@@ -29,9 +29,10 @@ function MyBooks() {
       }
     }
 
-
-    fetchMyBooks();
-  }, []);
+    if (token && userId) {
+      fetchMyBooks();
+    }
+  }, [token, userId]);
 
   if (loading) return <p>Загрузка моих книг...</p>;
   if (error) return <p style={{ color: 'red' }}>Ошибка: {error}</p>;

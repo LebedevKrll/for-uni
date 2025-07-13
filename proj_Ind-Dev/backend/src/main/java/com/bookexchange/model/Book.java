@@ -2,7 +2,6 @@ package com.bookexchange.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,10 +27,7 @@ public class Book {
     @Column(nullable = false)
     private String genre;
     
-    @Column(name = "publication_year")
-    private Integer publicationYear;
-    
-    @Column(name = "owner_id", nullable = true)
+    @Column(name = "owner_id")
     private Long ownerId;
     
     @Column(name = "owner_name")
@@ -46,12 +42,6 @@ public class Book {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-    
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
@@ -59,13 +49,11 @@ public class Book {
     
     public Book() {}
     
-    public Book(String title, String author, String description, String genre, 
-                Integer publicationYear, Long ownerId, String ownerName) {
+    public Book(String title, String author, String description, String genre, Long ownerId, String ownerName) {
         this.title = title;
         this.author = author;
         this.description = description;
         this.genre = genre;
-        this.publicationYear = publicationYear;
         this.ownerId = ownerId;
         this.ownerName = ownerName;
     }
@@ -85,9 +73,6 @@ public class Book {
     public String getGenre() { return genre; }
     public void setGenre(String genre) { this.genre = genre; }
     
-    public Integer getPublicationYear() { return publicationYear; }
-    public void setPublicationYear(Integer publicationYear) { this.publicationYear = publicationYear; }
-    
     public Long getOwnerId() { return ownerId; }
     public void setOwnerId(Long ownerId) { this.ownerId = ownerId; }
     
@@ -96,9 +81,6 @@ public class Book {
     
     public Boolean getIsAvailable() { return isAvailable; }
     public void setIsAvailable(Boolean isAvailable) { this.isAvailable = isAvailable; }
-    
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }

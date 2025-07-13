@@ -9,16 +9,20 @@ import java.util.List;
 
 @Repository
 public interface ExchangeRepository extends JpaRepository<Exchange, Long> {
-    
+
     List<Exchange> findByRequesterId(Long requesterId);
-    
+
     List<Exchange> findByOwnerId(Long ownerId);
-    
-    List<Exchange> findByBookId(Long bookId);
-    
+
+    // Поиск обменов, где книга является предлагаемой
+    List<Exchange> findByOfferedBookId(Long offeredBookId);
+
+    // Поиск обменов, где книга является запрашиваемой
+    List<Exchange> findByReqBookId(Long requestedBookId);
+
     @Query("SELECT COUNT(e) FROM Exchange e WHERE e.status = 'COMPLETED'")
     Long countCompletedExchanges();
-    
+
     @Query("SELECT e.status, COUNT(e) FROM Exchange e GROUP BY e.status")
     List<Object[]> getExchangeStatistics();
 }

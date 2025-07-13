@@ -1,7 +1,6 @@
 package com.bookexchange.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "exchanges")
@@ -11,44 +10,33 @@ public class Exchange {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "requester_id", nullable = false)
+    @Column(name = "requester_id")
     private Long requesterId;
     
     @Column(name = "requester_name")
     private String requesterName;
     
-    @Column(name = "owner_id", nullable = false)
+    @Column(name = "owner_id")
     private Long ownerId;
     
     @Column(name = "owner_name")
     private String ownerName;
     
-    @Column(name = "book_id", nullable = false)
-    private Long bookId;
+    @Column(name = "offered_book_id")
+    private Long offeredBookId;
     
-    @Column(name = "book_title")
-    private String bookTitle;
+    @Column(name = "offered_book_title")
+    private String offeredBookTitle;
     
+    @Column(name = "requested_book_id")
+    private Long reqBookId;
+    
+    @Column(name = "requested_book_title")
+    private String reqBookTitle;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ExchangeStatus status = ExchangeStatus.PENDING;
-    
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-    
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-    
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-    
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
     
     public enum ExchangeStatus {
         PENDING, ACCEPTED, REJECTED, COMPLETED
@@ -57,13 +45,16 @@ public class Exchange {
     public Exchange() {}
     
     public Exchange(Long requesterId, String requesterName, Long ownerId, 
-                   String ownerName, Long bookId, String bookTitle) {
+                   String ownerName, Long offeredBookId, String offeredBookTitle,
+                   Long reqBookId, String reqBookTitle) {
         this.requesterId = requesterId;
         this.requesterName = requesterName;
         this.ownerId = ownerId;
         this.ownerName = ownerName;
-        this.bookId = bookId;
-        this.bookTitle = bookTitle;
+        this.offeredBookId = offeredBookId;
+        this.offeredBookTitle = offeredBookTitle;
+        this.reqBookId = reqBookId;
+        this.reqBookTitle = reqBookTitle;
     }
     
     public Long getId() { return id; }
@@ -81,18 +72,19 @@ public class Exchange {
     public String getOwnerName() { return ownerName; }
     public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
     
-    public Long getBookId() { return bookId; }
-    public void setBookId(Long bookId) { this.bookId = bookId; }
+    public Long getOfferedBookId() { return offeredBookId; }
+    public void setOfferedBookId(Long offeredBookId) { this.offeredBookId = offeredBookId; }
     
-    public String getBookTitle() { return bookTitle; }
-    public void setBookTitle(String bookTitle) { this.bookTitle = bookTitle; }
+    public String getRequestedBookTitle() { return reqBookTitle; }
+    public void setRequestedBookTitle(String reqBookTitle) { this.reqBookTitle = reqBookTitle; }
     
+    public Long getRequestedBookId() { return reqBookId; }
+    public void setRequestedBookId(Long reqBookId) { this.reqBookId = reqBookId; }
+    
+    public String getOfferedBookTitle() { return offeredBookTitle; }
+    public void setOfferedBookTitle(String offeredBookTitle) { this.offeredBookTitle = offeredBookTitle; }
+
     public ExchangeStatus getStatus() { return status; }
     public void setStatus(ExchangeStatus status) { this.status = status; }
-    
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-    
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
-}
+
+}    

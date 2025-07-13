@@ -17,35 +17,50 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:3000")
 @Tag(name = "Admin", description = "Administrative APIs")
 public class AdminController {
-    
+
     @Autowired
     private BookService bookService;
-    
+
     @Autowired
     private ExchangeService exchangeService;
-    
+
     @GetMapping("/statistics")
-    @Operation(summary = "Get platform statistics", 
+    @Operation(summary = "Get platform statistics",
                description = "Get comprehensive statistics about the platform")
     public ResponseEntity<Map<String, Object>> getStatistics() {
         Map<String, Object> statistics = new HashMap<>();
-        
-        List<String> allBooks = bookService.getAllAvailableBooks()
-                .stream()
-                .map(book -> book.getTitle() + " by " + book.getAuthor())
+
+        // Получаем все доступные книги
+        List<?> allBooksList = bookService.getAllAvailableBooks();
+        List<String> allBooks = allBooksList == null ? List.of() :
+            allBooksList.stream()
+                .map(book -> {
+                    // Предполагается, что book имеет методы getTitle() и getAuthor()
+                    // Если book — это объект Book, приведите тип и вызовите методы
+                    try {
+                        var b = (com.bookexchange.model.Book) book;
+                        return b.getTitle() + " by " + b.getAuthor();
+                    } catch (ClassCastException e) {
+                        return "Unknown book";
+                    }
+                })
                 .toList();
+
         statistics.put("totalBooks", allBooks.size());
         statistics.put("books", allBooks);
-        
+
+        // Количество завершённых обменов
         Long completedExchanges = exchangeService.getCompletedExchangesCount();
+        statistics.put("completedExchanges", completedExchanges != null ? completedExchanges : 0L);
+
+        // Статистика по статусам обменов
         List<Object[]> exchangeStats = exchangeService.getExchangeStatistics();
-        
-        statistics.put("completedExchanges", completedExchanges);
-        statistics.put("exchangeStatistics", exchangeStats);
-        
+        statistics.put("exchangeStatistics", exchangeStats != null ? exchangeStats : List.of());
+
+        // Список жанров
         List<String> genres = bookService.getAllGenres();
-        statistics.put("availableGenres", genres);
-        
+        statistics.put("availableGenres", genres != null ? genres : List.of());
+
         return ResponseEntity.ok(statistics);
     }
 }
