@@ -7,15 +7,17 @@ function Register() {
     email: '',
     password: '',
     confirmPassword: '',
+    isAdmin: false,
   });
 
   const [errors, setErrors] = useState({});
   const { register } = useAuth();
 
   const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
@@ -34,7 +36,9 @@ function Register() {
     e.preventDefault();
     if (!validate()) return;
 
-    const result = await register(formData.name, formData.email, formData.password);
+    const role = formData.isAdmin ? 'ADMIN' : 'USER';
+
+    const result = await register(formData.name, formData.email, formData.password, role);
 
     if (result.success) {
       alert('Регистрация успешна!');
@@ -43,6 +47,7 @@ function Register() {
         email: '',
         password: '',
         confirmPassword: '',
+        isAdmin: false,
       });
       setErrors({});
     } else {
@@ -100,6 +105,19 @@ function Register() {
             style={{ width: '100%', padding: '8px' }}
           />
           {errors.confirmPassword && <div style={{ color: 'red' }}>{errors.confirmPassword}</div>}
+        </div>
+
+        <div style={{ marginBottom: '15px' }}>
+          <label>
+            <input
+              type="checkbox"
+              name="isAdmin"
+              checked={formData.isAdmin}
+              onChange={handleChange}
+              style={{ marginRight: '8px' }}
+            />
+            Зарегистрироваться как админ
+          </label>
         </div>
 
         <button type="submit" style={{ padding: '10px 20px' }}>Зарегистрироваться</button>

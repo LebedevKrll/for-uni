@@ -20,12 +20,14 @@ export const AuthProvider = ({ children }) => {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     axios.defaults.headers.common['X-User-Id'] = userData.id;
     axios.defaults.headers.common['X-User-Name'] = userData.name;
+    axios.defaults.headers.common['X-User-Role'] = userData.role;
   };
 
   const clearAxiosHeaders = () => {
     delete axios.defaults.headers.common['Authorization'];
     delete axios.defaults.headers.common['X-User-Id'];
     delete axios.defaults.headers.common['X-User-Name'];
+    delete axios.defaults.headers.common['X-User-Role'];
   };
 
   const validateToken = useCallback(async () => {
@@ -61,14 +63,12 @@ export const AuthProvider = ({ children }) => {
         email,
         password,
       });
-      console.log('Login response:', response.data);
 
       const { token: newToken, user: userData } = response.data;
 
       setToken(newToken);
       setUser(userData);
       localStorage.setItem('token', newToken);
-      console.log('Token saved to localStorage:', localStorage.getItem('token'));
       setAxiosHeaders(userData, newToken);
 
       return { success: true };
@@ -82,12 +82,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (name, email, password) => {
+  const register = async (name, email, password, role = 'USER') => {
     try {
       const response = await axios.post('http://localhost:8081/auth/register', {
         name,
         email,
         password,
+        role,
       });
 
       const { token: newToken, user: userData } = response.data;
@@ -115,6 +116,10 @@ export const AuthProvider = ({ children }) => {
     clearAxiosHeaders();
   };
 
+  const isAdmin = () => {
+    return user?.role === 'ADMIN';
+  };
+
   const value = {
     user,
     token,
@@ -122,6 +127,7 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     loading,
+    isAdmin,
   };
 
   return (

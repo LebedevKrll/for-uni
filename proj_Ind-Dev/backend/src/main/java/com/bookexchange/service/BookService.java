@@ -25,8 +25,8 @@ public class BookService {
         String authorFilter = (author == null) ? "" : author;
         String genreFilter = (genre == null) ? "" : genre;
 
-        return bookRepository.findByTitleContainingIgnoreCaseAndAuthorContainingIgnoreCaseAndGenreContainingIgnoreCase(
-                titleFilter, authorFilter, genreFilter, pageable);
+        return bookRepository.findByTitleContainingIgnoreCaseAndAuthorContainingIgnoreCaseAndGenreContainingIgnoreCaseAndIsAvailable(
+                titleFilter, authorFilter, genreFilter, true, pageable);
     }
     
     public Optional<Book> getBookById(Long id) {

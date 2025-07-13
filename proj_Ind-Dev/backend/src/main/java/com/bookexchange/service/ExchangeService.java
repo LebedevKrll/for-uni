@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class ExchangeService {
@@ -59,28 +61,8 @@ public class ExchangeService {
         return exchangeRepository.save(exchange);
     }
 
-    @Transactional
-    public Exchange updateExchangeStatus(Long exchangeId, Exchange.ExchangeStatus status) {
-        Exchange exchange = exchangeRepository.findById(exchangeId)
-                .orElseThrow(() -> new RuntimeException("Exchange not found"));
-
-        exchange.setStatus(status);
-
-        if (status == Exchange.ExchangeStatus.ACCEPTED) {
-            Book requestedBook = bookRepository.findById(exchange.getRequestedBookId()).orElse(null);
-            Book offeredBook = bookRepository.findById(exchange.getOfferedBookId()).orElse(null);
-
-            if (requestedBook != null) {
-                requestedBook.setIsAvailable(false);
-                bookRepository.save(requestedBook);
-            }
-            if (offeredBook != null) {
-                offeredBook.setIsAvailable(false);
-                bookRepository.save(offeredBook);
-            }
-        }
-
-        return exchangeRepository.save(exchange);
+    public Page<Exchange> getAllExchanges(Pageable pageable) {
+        return exchangeRepository.findAll(pageable);
     }
 
     public Optional<Exchange> getExchangeById(Long id) {

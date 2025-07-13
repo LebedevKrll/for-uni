@@ -12,6 +12,7 @@ type Claims struct {
     UserID uint   `json:"user_id"`
     Email  string `json:"email"`
     Name   string `json:"name"`
+    Role   string `json:"role"`
     jwt.StandardClaims
 }
 
@@ -22,6 +23,7 @@ func generateToken(user *User) (string, error) {
         UserID: user.ID,
         Email:  user.Email,
         Name:   user.Name,
+        Role:   user.Role,
         StandardClaims: jwt.StandardClaims{
             ExpiresAt: expirationTime.Unix(),
             IssuedAt:  time.Now().Unix(),

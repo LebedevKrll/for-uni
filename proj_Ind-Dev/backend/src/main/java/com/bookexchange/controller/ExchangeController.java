@@ -6,11 +6,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Optional;
 
 @RestController
@@ -18,6 +22,8 @@ import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:3000")
 @Tag(name = "Exchanges", description = "Book exchange management APIs")
 public class ExchangeController {
+
+    private static final Logger logger = LoggerFactory.getLogger(BookController.class);
 
     @Autowired
     private ExchangeService exchangeService;
@@ -30,14 +36,26 @@ public class ExchangeController {
                                             @RequestHeader("X-User-Name") String userName) {
         exchange.setRequesterId(userId);
         exchange.setRequesterName(userName);
-
+        logger.info("CreateExchange called with: requestedBookId={}, offeredBookId={}, requesterId={}",
+                exchange.getRequestedBookId(), exchange.getOfferedBookId(), exchange.getRequesterId());
         try {
             Exchange createdExchange = exchangeService.createExchange(exchange);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdExchange);
         } catch (RuntimeException e) {
-            // Возвращаем сообщение ошибки для удобства фронтенда
+            logger.error("Error creating exchange", e);
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping
+    @Operation(summary = "Get paginated exchanges", description = "For logs with pagination")
+    public ResponseEntity<Page<Exchange>> getAllExchanges(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Exchange> exchangesPage = exchangeService.getAllExchanges(pageable);
+        return ResponseEntity.ok(exchangesPage);
     }
 
     @GetMapping("/{id}")
@@ -48,24 +66,4 @@ public class ExchangeController {
                        .orElse(ResponseEntity.notFound().build());
     }
 
-    // Дополнительно можно добавить метод для получения всех обменов пользователя
-    @GetMapping("/user/{userId}")
-    @Operation(summary = "Get exchanges for user", description = "Get all exchanges where user is requester or owner")
-    public ResponseEntity<List<Exchange>> getUserExchanges(@PathVariable Long userId) {
-        List<Exchange> exchanges = exchangeService.getUserExchanges(userId);
-        return ResponseEntity.ok(exchanges);
-    }
-
-    // Можно добавить метод для обновления статуса обмена, если нужно
-    @PutMapping("/{id}/status")
-    @Operation(summary = "Update exchange status", description = "Update status of an exchange")
-    public ResponseEntity<?> updateExchangeStatus(@PathVariable Long id,
-                                                  @RequestParam Exchange.ExchangeStatus status) {
-        try {
-            Exchange updatedExchange = exchangeService.updateExchangeStatus(id, status);
-            return ResponseEntity.ok(updatedExchange);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
 }

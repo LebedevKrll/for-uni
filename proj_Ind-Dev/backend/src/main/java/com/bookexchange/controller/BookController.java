@@ -20,7 +20,10 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", 
+             allowedHeaders = "*", 
+             allowCredentials = "true", 
+             methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 @RequestMapping("/api/books")
 @Tag(name = "Books", description = "Book management APIs")
 public class BookController {
@@ -65,10 +68,16 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdBook);
     }
 
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Delete book", description = "Remove a book from the platform")
+    @PutMapping("/{id}")
+    @Operation(summary = "Hide book", description = "Make book invisible, because they were traded")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
-        bookService.deleteBook(id);
+        Optional<Book> optionalBook = bookService.getBookById(id);
+        if (optionalBook.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Book book = optionalBook.get();
+        book.setIsAvailable(false);
+        bookService.createBook(book);  
         return ResponseEntity.noContent().build();
     }
     

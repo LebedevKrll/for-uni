@@ -29,10 +29,10 @@ public class Exchange {
     private String offeredBookTitle;
     
     @Column(name = "requested_book_id")
-    private Long reqBookId;
+    private Long requestedBookId;
     
     @Column(name = "requested_book_title")
-    private String reqBookTitle;
+    private String requestedBookTitle;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -46,15 +46,15 @@ public class Exchange {
     
     public Exchange(Long requesterId, String requesterName, Long ownerId, 
                    String ownerName, Long offeredBookId, String offeredBookTitle,
-                   Long reqBookId, String reqBookTitle) {
+                   Long requestedBookId, String requestedBookTitle) {
         this.requesterId = requesterId;
         this.requesterName = requesterName;
         this.ownerId = ownerId;
         this.ownerName = ownerName;
         this.offeredBookId = offeredBookId;
         this.offeredBookTitle = offeredBookTitle;
-        this.reqBookId = reqBookId;
-        this.reqBookTitle = reqBookTitle;
+        this.requestedBookId = requestedBookId;
+        this.requestedBookTitle = requestedBookTitle;
     }
     
     public Long getId() { return id; }
@@ -75,11 +75,11 @@ public class Exchange {
     public Long getOfferedBookId() { return offeredBookId; }
     public void setOfferedBookId(Long offeredBookId) { this.offeredBookId = offeredBookId; }
     
-    public String getRequestedBookTitle() { return reqBookTitle; }
-    public void setRequestedBookTitle(String reqBookTitle) { this.reqBookTitle = reqBookTitle; }
+    public String getRequestedBookTitle() { return requestedBookTitle; }
+    public void setRequestedBookTitle(String requestedBookTitle) { this.requestedBookTitle = requestedBookTitle; }
     
-    public Long getRequestedBookId() { return reqBookId; }
-    public void setRequestedBookId(Long reqBookId) { this.reqBookId = reqBookId; }
+    public Long getRequestedBookId() { return requestedBookId; }
+    public void setRequestedBookId(Long requestedBookId) { this.requestedBookId = requestedBookId; }
     
     public String getOfferedBookTitle() { return offeredBookTitle; }
     public void setOfferedBookTitle(String offeredBookTitle) { this.offeredBookTitle = offeredBookTitle; }

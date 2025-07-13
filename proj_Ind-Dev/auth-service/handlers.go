@@ -39,10 +39,16 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
     
+    role := strings.ToUpper(req.Role)
+    if role != "ADMIN" {
+        role = "USER"
+    }
+    
     user := User{
         Email:    req.Email,
         Name:     req.Name,
         Password: string(hashedPassword),
+        Role:     role,
     }
     
     if err := db.Create(&user).Error; err != nil {
@@ -62,7 +68,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
     
-    log.Printf("Пользователь зарегистрирован: ID=%d, Email=%s, Name=%s", user.ID, user.Email, user.Name)
+    log.Printf("Пользователь зарегистрирован: ID=%d, Email=%s, Name=%s, Role=%s", user.ID, user.Email, user.Name, user.Role)
 
     response := AuthResponse{
         Token:        token,
@@ -71,6 +77,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
             ID:    user.ID,
             Email: user.Email,
             Name:  user.Name,
+            Role:  user.Role,
         },
     }
     
@@ -120,6 +127,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
             ID:    user.ID,
             Email: user.Email,
             Name:  user.Name,
+            Role:  user.Role,
         },
     }
     
@@ -149,11 +157,13 @@ func validateTokenHandler(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("X-User-Id", string(rune(claims.UserID)))
     w.Header().Set("X-User-Name", claims.Name)
     w.Header().Set("X-User-Email", claims.Email)
+    w.Header().Set("X-User-Role", claims.Role)
     
     response := UserResponse{
         ID:    claims.UserID,
         Email: claims.Email,
         Name:  claims.Name,
+        Role:  claims.Role,
     }
     
     w.Header().Set("Content-Type", "application/json")

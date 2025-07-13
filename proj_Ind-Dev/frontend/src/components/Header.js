@@ -26,7 +26,10 @@ const Header = () => {
             <>
               <Link to="/my-books" className="nav-link">Мои книги</Link>
               <Link to="/add-book" className="nav-link">Добавить книгу</Link>
-              <Link to="/exchanges" className="nav-link">Обмены</Link>
+              {user.role === 'ADMIN' && (
+                <Link to="/logs" className="nav-link">Обмены</Link>
+              )}
+              
               <div className="user-info">
                 <span>Привет, {user.name}!</span>
                 <button onClick={handleLogout} className="logout-btn">

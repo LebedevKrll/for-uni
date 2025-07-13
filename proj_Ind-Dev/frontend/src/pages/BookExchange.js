@@ -67,7 +67,7 @@ try {
       await axios.post(
         'http://localhost:8080/api/exchanges',
         {
-          reqBookId: Number(id),
+          requestedBookId: Number(id),
           offeredBookId: Number(selectedBookId),
         },
         {
@@ -80,6 +80,12 @@ try {
       );
       setSuccessMessage('Предложение обмена успешно отправлено!');
       setSelectedBookId('');
+      await axios.put(
+        `http://localhost:8080/api/books/${Number(id)}`, {},
+      );
+      await axios.put(
+        `http://localhost:8080/api/books/${Number(selectedBookId)}`, {},
+      );
     } catch (err) {
       setError('Ошибка при отправке предложения обмена. Попробуйте позже.');
     } finally {

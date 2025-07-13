@@ -14,11 +14,9 @@ public interface ExchangeRepository extends JpaRepository<Exchange, Long> {
 
     List<Exchange> findByOwnerId(Long ownerId);
 
-    // Поиск обменов, где книга является предлагаемой
     List<Exchange> findByOfferedBookId(Long offeredBookId);
 
-    // Поиск обменов, где книга является запрашиваемой
-    List<Exchange> findByReqBookId(Long requestedBookId);
+    List<Exchange> findByRequestedBookId(Long requestedBookId);
 
     @Query("SELECT COUNT(e) FROM Exchange e WHERE e.status = 'COMPLETED'")
     Long countCompletedExchanges();

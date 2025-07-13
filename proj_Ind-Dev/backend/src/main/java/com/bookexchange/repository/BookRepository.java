@@ -17,8 +17,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     List<Book> findByOwnerIdAndIsAvailableTrue(Long ownerId);
 
-    Page<Book> findByTitleContainingIgnoreCaseAndAuthorContainingIgnoreCaseAndGenreContainingIgnoreCase(
-        String title, String author, String genre, Pageable pageable);
+    Page<Book> findByTitleContainingIgnoreCaseAndAuthorContainingIgnoreCaseAndGenreContainingIgnoreCaseAndIsAvailable(
+        String title, String author, String genre, Boolean isAvailable, Pageable pageable);
 
     @Query("SELECT DISTINCT b.genre FROM Book b WHERE b.isAvailable = true ORDER BY b.genre")
     List<String> findAllAvailableGenres();

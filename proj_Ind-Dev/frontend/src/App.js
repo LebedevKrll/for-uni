@@ -7,11 +7,12 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Books from './pages/Books';
 import MyBooks from './pages/MyBooks.js';
-import Exchanges from './pages/Exchanges';
+import LogsPage from './pages/Logs';
 import AddBook from './pages/AddBook';
 import BookDetails from './pages/BookDetails';
 import BookExchange from './pages/BookExchange';
 import ProtectedRoute from './components/ProtectedRoute';
+import ExchangeDetails from './pages/ExchangeDetails.js'
 import './App.css';
 
 function App() {
@@ -38,9 +39,14 @@ function App() {
                   <AddBook />
                 </ProtectedRoute>
               } />
-              <Route path="/exchanges" element={
-                <ProtectedRoute>
-                  <Exchanges />
+              <Route path="/logs" element={
+                <ProtectedRoute requiredRole="ADMIN">
+                  <LogsPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/logs/:id" element={
+                <ProtectedRoute requiredRole="ADMIN">
+                  <ExchangeDetails />
                 </ProtectedRoute>
               } />
             </Routes>
